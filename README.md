@@ -1,12 +1,10 @@
 # Moshi skill
 
-Standalone agent skill repository for Moshi remote host setup and tmux workflows.
+Standalone agent skill repository for Moshi remote coding best practices.
 
-## Included skills
+## Included skill
 
-- `moshi-mac-setup`: entry skill for host setup, SSH or Mosh readiness, and agent hooks
-- `moshi-tmux-environment`: global tmux configuration for Moshi-friendly scrolling, titles, and numbering
-- `moshi-tmux-session`: project or agent session bootstrap rooted at a chosen directory
+- `moshi-best-practices`: host readiness, tmux defaults, tmux session bootstrap, optional `moshi <dir>` shell helper, and `moshi-hooks`
 
 ## Install with `skills`
 
@@ -16,10 +14,10 @@ From a local checkout:
 npx skills add ./moshi-skill
 ```
 
-Install only one skill from the repo:
+Install the skill from the repo:
 
 ```bash
-npx skills add ./moshi-skill --skill moshi-mac-setup
+npx skills add ./moshi-skill --skill moshi-best-practices
 ```
 
 List discoverable skills without installing:

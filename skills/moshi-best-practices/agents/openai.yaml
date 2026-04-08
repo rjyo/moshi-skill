@@ -1,0 +1,4 @@
+interface:
+  display_name: "Moshi Best Practices"
+  short_description: "Prepare a Mac for Moshi remote coding."
+  default_prompt: "Use $moshi-best-practices to inspect the host, fix SSH or Mosh readiness, configure tmux, create a tmux project session, optionally install the `moshi <dir>` shell helper, and set up moshi-hooks."

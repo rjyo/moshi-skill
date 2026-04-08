@@ -1,4 +1,0 @@
-interface:
-  display_name: "Moshi tmux Environment"
-  short_description: "Configure tmux defaults for Moshi workflows."
-  default_prompt: "Use $moshi-tmux-environment to inspect ~/.tmux.conf, apply the recommended Moshi tmux defaults, and verify scrolling, titles, and numbering."

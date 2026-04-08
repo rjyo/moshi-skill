@@ -1,4 +1,0 @@
-interface:
-  display_name: "Moshi Mac Setup"
-  short_description: "Prepare a Mac host for Moshi remote coding."
-  default_prompt: "Use $moshi-mac-setup to inspect the host, fix SSH or Mosh issues, install Moshi agent hooks, and route tmux work to the dedicated Moshi tmux skills."
