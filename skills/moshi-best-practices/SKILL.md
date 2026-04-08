@@ -1,6 +1,6 @@
 ---
 name: moshi-best-practices
-description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for SSH or Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
+description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
 ---
 
 # Moshi Best Practices
@@ -23,13 +23,43 @@ Use it for either:
 
 Target outcome:
 
+- preferred transport is Mosh plus tmux; fallback is SSH plus tmux
 - the host has a working SSH entry point
 - `tmux` is installed
 - `mosh-server` is installed when the user wants Mosh, otherwise SSH plus tmux is acceptable
 - both resolve in the current shell and in the login shell's non-interactive mode
 - at least one tmux session exists so the Moshi selector can appear.
 
-Then ask the user to reconnect from Moshi. Expected result: the tmux selector appears, and Mosh can work instead of plain SSH when configured.
+Inspect with a small set of real checks. Keep OS-specific mechanics minimal, but do not skip verification.
+
+Useful checks:
+
+```bash
+command -v tmux || true
+command -v mosh-server || true
+tmux list-sessions 2>/dev/null || true
+LOGIN_SHELL="${SHELL:-/bin/sh}"
+"$LOGIN_SHELL" -c 'command -v tmux'
+"$LOGIN_SHELL" -c 'command -v mosh-server'
+```
+
+Useful macOS-specific checks when relevant:
+
+```bash
+dscl . -read "/Users/$USER" UserShell
+systemsetup -getremotelogin || true
+```
+
+Verify after changes:
+
+```bash
+command -v tmux
+tmux list-sessions
+"$LOGIN_SHELL" -c 'command -v tmux'
+"$LOGIN_SHELL" -c 'command -v mosh-server' || true
+```
+
+Then ask the user to reconnect from Moshi. Expected result: the tmux selector appears, and the transport can use Mosh instead of plain SSH when configured.
 
 ## 2. tmux Environment
 
