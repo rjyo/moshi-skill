@@ -1,8 +1,8 @@
 # `moshi` Shell Function
 
-Use this when the user explicitly wants a `moshi <dir>` helper.
+Use this when the user explicitly wants a `moshi DIR` helper.
 
-Choose the correct startup file for the active shell. For zsh, prefer `~/.zshrc` unless the user already keeps shell functions elsewhere.
+Choose the correct startup file for the active shell. Do not assume a specific OS. Do not paste this into shells that need a different function syntax without adapting it.
 
 ```bash
 moshi() {

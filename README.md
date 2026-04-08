@@ -1,10 +1,10 @@
 # Moshi skill
 
-Standalone agent skill repository for Moshi remote coding best practices.
+Standalone agent skill repository for Moshi remote coding best practices on any host OS.
 
 ## Included skill
 
-- `moshi-best-practices`: host readiness, tmux defaults, tmux session bootstrap, optional `moshi <dir>` shell helper, and `moshi-hooks`
+- `moshi-best-practices`: host readiness, tmux defaults, tmux session bootstrap, optional `moshi DIR` shell helper, and `moshi-hooks`
 
 ## Install with `skills`
 
