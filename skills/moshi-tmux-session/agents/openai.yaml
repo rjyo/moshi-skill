@@ -1,0 +1,4 @@
+interface:
+  display_name: "Moshi tmux Session"
+  short_description: "Create a Moshi-ready tmux project session."
+  default_prompt: "Use $moshi-tmux-session to confirm the starting directory, create a tmux session rooted there, lay out the standard windows, and verify it is ready for Moshi reconnection."
