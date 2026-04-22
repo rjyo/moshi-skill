@@ -1,6 +1,6 @@
 ---
 name: moshi-best-practices
-description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
+description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, adapting shell or tmux behavior with the `MOSHI_CLIENT` env signal, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
 ---
 
 # Moshi Best Practices
@@ -81,7 +81,57 @@ Workflow:
 - update overlapping settings instead of appending duplicates
 - reload tmux after editing
 
-## 3. tmux Project Session
+## 3. MOSHI_CLIENT Signal
+
+`MOSHI_CLIENT=1` is an opt-in environment variable the Moshi iOS client exports
+into the remote shell so rc files, prompts, and tmux configs can detect a
+Moshi-launched session and adapt. The user enables it in the app under
+**Settings → Integrations → Export ENV** (off by default). When on, it is set
+identically on both the Mosh path (via `mosh-server -l MOSHI_CLIENT=1`) and the
+SSH fallback (via an injected `export` at shell start).
+
+The main use case is protecting Moshi's swipe-to-change-window gesture, which
+relies on reading the tmux status bar. A populated `status-left` /
+`status-right` from a custom theme can break detection. Conditionally clearing
+them when `MOSHI_CLIENT` is set keeps local themes intact while keeping Moshi
+detection reliable. Other uses: narrower prompts, dropping nerd-font glyphs,
+different key bindings.
+
+Shell (in the user's rc file):
+
+```sh
+if [ -n "$MOSHI_CLIENT" ]; then
+  # running under Moshi — trim prompts, skip heavy glyphs, etc.
+fi
+```
+
+tmux (in `~/.tmux.conf`):
+
+```tmux
+# propagate the variable into tmux sessions attached by this shell
+set-option -ga update-environment " MOSHI_CLIENT"
+
+# clear status regions for Moshi clients so swipe detection stays clean
+if-shell '[ -n "$MOSHI_CLIENT" ]' {
+  set -g status-left ''
+  set -g status-right ''
+}
+```
+
+After editing, reload tmux (`tmux source-file ~/.tmux.conf`).
+
+Verify, after the user toggles the setting on and reconnects from Moshi:
+
+```bash
+echo "$MOSHI_CLIENT"                       # expect: 1
+tmux show-environment | grep MOSHI_CLIENT  # expect a value in new sessions
+```
+
+If `echo` prints nothing, the toggle is off in the app — confirm with the user
+before editing host configs. The variable only appears in sessions opened
+after the toggle was flipped.
+
+## 4. tmux Project Session
 
 When creating a new session:
 
@@ -104,7 +154,7 @@ Create the session detached and root every initial window at the chosen director
 
 Then ask the user to reconnect in Moshi. Expected result: the session is visible in the tmux selector.
 
-## 4. Optional `moshi DIR` Helper
+## 5. Optional `moshi DIR` Helper
 
 Do not install this silently. Ask the user first if they want it.
 
@@ -118,7 +168,7 @@ If yes:
 
 Use the exact function from `references/moshi-shell-function.md`.
 
-## 5. Agent Hooks
+## 6. Agent Hooks
 
 Use `moshi-hooks`, not hand-written config, unless the user explicitly wants manual edits.
 
