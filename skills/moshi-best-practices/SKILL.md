@@ -170,9 +170,53 @@ Use the exact function from `references/moshi-shell-function.md`.
 
 ## 6. Agent Hooks
 
-Use `moshi-hooks`, not hand-written config, unless the user explicitly wants manual edits.
+Moshi has switched to a new hook system: `moshi-hook` (singular), a portable
+Go daemon. Unlike the old fire-and-forget `moshi-hooks` CLI, the daemon holds a
+persistent WebSocket to Moshi, so approvals are **bidirectional** — users can
+approve or deny tool calls directly from the iOS Live Activity or the Apple
+Watch, and the answer round-trips back to the agent without leaving the
+terminal. It also covers Claude Code, Codex CLI, and OpenCode from a single
+install.
 
-Core commands:
+Use `moshi-hook`, not hand-written config, unless the user explicitly wants
+manual edits.
+
+Install via the Homebrew tap, then pair and install hooks:
+
+```bash
+brew tap rjyo/moshi
+brew install moshi-hook
+moshi-hook pair --token <YOUR_TOKEN>   # token comes from the Moshi mobile app
+moshi-hook install                     # writes hook configs for installed agents
+brew services start moshi-hook         # keeps the daemon alive across reboots
+```
+
+`moshi-hook install` is non-destructive — it writes Moshi entries into
+`~/.claude/settings.json`, `~/.codex/config.toml`, and
+`.opencode/plugins/moshi-hooks.ts`, leaving any user-owned hooks alone.
+
+Verify:
+
+```bash
+moshi-hook status         # pairing state, socket path, WS connection
+moshi-hook logs -f        # tail the daemon log
+```
+
+Then run a short real agent task and confirm Moshi receives a push
+notification or Live Activity update, and that approving from the Live
+Activity / Watch unblocks the agent.
+
+For full CLI reference (every subcommand, flag, env var, and path), see
+`app-hook/docs/usage.md` in the monorepo, or the mirrored copy in the
+[`rjyo/homebrew-moshi`](https://github.com/rjyo/homebrew-moshi) tap.
+
+### Legacy: `moshi-hooks` (Bun CLI)
+
+The previous Bun-based CLI still works for older agent versions and for
+environments where Homebrew is unavailable. It is fire-and-forget — no
+bidirectional approvals, no Live Activity / Watch round-trip — but it remains
+a valid fallback. Do not mix the two on the same host: if `moshi-hook` is
+installed and paired, prefer it.
 
 ```bash
 bunx moshi-hooks setup
@@ -187,8 +231,3 @@ bunx moshi-hooks setup .
 bunx moshi-hooks setup --codex
 bunx moshi-hooks setup --opencode
 ```
-
-Final verification:
-
-- run a short real agent task
-- confirm Moshi receives a push notification or Live Activity update
