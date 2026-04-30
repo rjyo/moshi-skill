@@ -191,6 +191,25 @@ moshi-hook install                     # writes hook configs for installed agent
 brew services start moshi-hook         # keeps the daemon alive across reboots
 ```
 
+On macOS, `moshi-hook pair` uses Keychain by default. If pairing over SSH fails
+because Keychain is locked or unavailable, prefer one of these explicit paths:
+
+```bash
+security unlock-keychain ~/Library/Keychains/login.keychain-db
+moshi-hook pair --token <YOUR_TOKEN>
+```
+
+For headless hosts where Keychain access is undesirable or unreliable:
+
+```bash
+moshi-hook pair --token <YOUR_TOKEN> --store file
+```
+
+`--store file` writes the host secrets to `~/.config/moshi/secrets.json` with
+`0600` permissions and remembers the store choice for future `serve`, `status`,
+`usage --sync`, and `pair` commands. Do not use it silently; call out that this
+stores secrets outside Keychain.
+
 `moshi-hook install` is non-destructive — it writes Moshi entries into
 `~/.claude/settings.json`, `~/.codex/config.toml`, and
 `.opencode/plugins/moshi-hooks.ts`, leaving any user-owned hooks alone.
