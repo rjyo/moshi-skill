@@ -1,6 +1,6 @@
 ---
 name: moshi-best-practices
-description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, adapting shell or tmux behavior with the `MOSHI_CLIENT` env signal, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
+description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for Easy Pair host setup, SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, adapting shell or tmux behavior with the `MOSHI_CLIENT` env signal, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
 ---
 
 # Moshi Best Practices
@@ -20,6 +20,16 @@ Use it for either:
 - For `moshi DIR`, use a shell function named `moshi`, not a literal alias. Aliases cannot take arguments safely.
 
 ## 1. Host Readiness
+
+For a fresh Moshi SSH/Mosh setup, prefer **Easy Pair** when `moshi-hook` is available:
+
+```bash
+moshi-hook host setup
+```
+
+Tell the user to scan the Easy Pair QR from Moshi. This creates the saved host connection, generates the phone-side private key, and installs Moshi's public key on the host. Call out the security boundary: anyone who scans the QR before it expires can claim SSH access to the host, so they should not share the screen or setup link.
+
+Do not confuse Easy Pair with `moshi-hook pair --token`; token pairing is only for agent hooks, inbox, Live Activities, and Apple Watch events.
 
 Target outcome:
 
