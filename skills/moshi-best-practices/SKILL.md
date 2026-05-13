@@ -1,6 +1,8 @@
 ---
 name: moshi-best-practices
-description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for Easy Pair host setup, SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, adapting shell or tmux behavior with the `MOSHI_CLIENT` env signal, installing Moshi agent hooks for Claude Code or Codex CLI, or offering the optional `moshi DIR` shell helper.
+description: Use when preparing or verifying a host for Moshi remote coding. Trigger this for Easy Pair host setup, SSH or preferably Mosh readiness, non-interactive shell PATH issues, tmux defaults, creating a tmux project session rooted at a chosen directory, adapting shell or tmux behavior with the `MOSHI_CLIENT` env signal, installing Moshi agent hooks for Claude Code or Codex CLI, or using the packaged `moshi DIR` tmux launcher.
+metadata:
+  updatedAt: "2026-05-13"
 ---
 
 # Moshi Best Practices
@@ -17,7 +19,7 @@ Use it for either:
 - Inspect before editing.
 - Prefer direct config edits over platform-specific setup scripts.
 - Verify every outcome after changing it.
-- For `moshi DIR`, use a shell function named `moshi`, not a literal alias. Aliases cannot take arguments safely.
+- Do not install the old `moshi` shell helper or alias. Current installs provide `moshi` as a symlink to `moshi-hook`.
 
 ## 1. Host Readiness
 
@@ -143,6 +145,15 @@ after the toggle was flipped.
 
 ## 4. tmux Project Session
 
+When `moshi-hook` is installed from Homebrew or `install.sh`, prefer the packaged launcher:
+
+```bash
+moshi .
+moshi ~/projects/app
+```
+
+It resolves the directory, names the tmux session from the directory basename, and `exec`s `tmux new-session -A -s <name> -c <dir>`. No Moshi wrapper process stays alive.
+
 When creating a new session:
 
 - read the current working directory
@@ -164,21 +175,7 @@ Create the session detached and root every initial window at the chosen director
 
 Then ask the user to reconnect in Moshi. Expected result: the session is visible in the tmux selector.
 
-## 5. Optional `moshi DIR` Helper
-
-Do not install this silently. Ask the user first if they want it.
-
-If yes:
-
-- install a shell function named `moshi` in the correct startup file for the active shell
-- make it accept a directory argument, defaulting to `$PWD`
-- name the tmux session from the directory basename
-- create the standard detached session layout only if the session does not already exist
-- attach to the session afterward
-
-Use the exact function from `references/moshi-shell-function.md`.
-
-## 6. Agent Hooks
+## 5. Agent Hooks
 
 Moshi has switched to a new hook system: `moshi-hook` (singular), a portable
 Go daemon. Unlike the old fire-and-forget `moshi-hooks` CLI, the daemon holds a
